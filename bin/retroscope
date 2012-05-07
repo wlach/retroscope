@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+
+import os
+import shutil
+import time
+import mozhttpd
+import tempfile
+import sys
+
+SERVER_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../html"))
+RECORD_VIDEO = os.path.join(os.path.dirname(__file__), "record-video.sh")
+
+def get_video_fname(num):
+    return os.path.join(SERVER_DIR, "video%s.webm" % num)
+
+# create the server
+host = mozhttpd.iface.get_lan_ip()
+server = mozhttpd.MozHttpd(host=host, port=8080, docroot=SERVER_DIR)
+
+server.start(block=False)
+
+print "Serving '%s' at %s:%s" % (server.docroot, server.host, server.port)
+
+while 1:
+    # Move any existing movies back
+    for i in reversed(range(1,4)):
+        try:
+            shutil.copyfile(get_video_fname(i-1), get_video_fname(i))
+        except IOError:
+            # ignore ioerrors, most likely it just means the file doesn't exist yet
+            pass
+
+    tmp = tempfile.NamedTemporaryFile()
+    os.system("%s %s > /dev/null 2>&1" % (RECORD_VIDEO, tmp.name))
+    shutil.copyfile(tmp.name, get_video_fname(0))
+    time.sleep(30)
+

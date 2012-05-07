@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="refresh" content="60">
+  <meta charset="utf-8">
+</head>
+<body>
+<center>
+<table style="width:100%;">
+  <tr>
+    <td id="video0">
+      <
+    </td>
+    <td id="video1">
+    </td>
+  </tr>
+  <tr>
+    <td id="video2">
+    </td>
+    <td id="video3">
+    </td>
+  </tr>
+</table>
+</center>
+  <script src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+  <script>
+  $(document).ready(function () {
+     function updateDimensions() {
+       var tileHeight = Math.max(64, ($(window).height() / 2) - 16);
+       for (var i=0; i<4; i++) {
+          var rand = parseInt(1000*Math.random());
+          $("#video" + i).html("<video src='video" + i + ".webm?var=" + rand +"' style='width:100%; height: " + tileHeight +  "px;' autoplay loop></video>");
+       }
+     }
+     updateDimensions();
+     $(window).resize(function() {
+       updateDimensions();
+     });
+  });
+  </script>
+</body>
+</html>
